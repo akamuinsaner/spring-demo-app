@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.UserMapper">
+    <sql id="insertFields">
+        username, password
+    </sql>
+
+    <sql id="selectFields">
+        id, username, password
+    </sql>
+
+    <resultMap id="UserMap" type="com.example.demo.model.User">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="username" jdbcType="VARCHAR" property="username" />
+        <result column="password" jdbcType="VARCHAR" property="password" />
+        <collection property="roles" ofType="com.example.demo.model.Role">
+            <id column="r_id" jdbcType="INTEGER" property="id" />
+            <result column="r_name" jdbcType="VARCHAR" property="name"></result>
+            <result column="r_chinese_name" jdbcType="VARCHAR" property="chineseName"></result>
+        </collection>
+        <collection property="permissions" ofType="com.example.demo.model.Permission">
+            <id column="p_id" jdbcType="INTEGER" property="id" />
+            <result column="p_name" jdbcType="VARCHAR" property="name"></result>
+            <result column="p_chinese_name" jdbcType="VARCHAR" property="chineseName"></result>
+        </collection>
+    </resultMap>
+
+    <select id="findByUsername" parameterType="String" resultMap="UserMap">
+        select u.id, u.username,u.password,r.id as r_id, r.name as r_name, r.chinese_name as r_chinese_name,p.id as p_id,p.name as p_name,p.chinese_name as p_chinese_name from user u
+        left join sys_user_role sur on u.id = sur.user_id
+        left join role r on sur.role_id = r.id
+        left join sys_role_permission srp on r.id = srp.role_id
+        left join permission p on srp.permission_id = p.id where u.username = #{username, jdbcType=VARCHAR};
+    </select>
+
+    <select id="findByUserId" parameterType="Long" resultMap="UserMap">
+        select u.id, u.username,u.password,r.id as r_id, r.name as r_name, r.chinese_name as r_chinese_name,p.id as p_id,p.name as p_name,p.chinese_name as p_chinese_name from user u
+        left join sys_user_role s on u.id = s.user_id
+        left join role r on s.role_id = r.id
+        left join sys_role_permission srp on r.id = srp.role_id
+        left join permission p on srp.permission_id = p.id where u.id = #{id};
+    </select>
+
+    <insert id="save" parameterType="com.example.demo.model.User" useGeneratedKeys="true"  keyProperty="id">
+        insert into user (<include refid="insertFields"></include>) values (#{username, jdbcType=VARCHAR},#{password, jdbcType=VARCHAR});
+    </insert>
+
+
+</mapper>

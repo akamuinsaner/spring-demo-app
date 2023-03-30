@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.RolePermissionMapper">
+    <sql id="insertFields">
+        role_id, permission_id
+    </sql>
+
+    <resultMap id="RolePermissionMap" type="com.example.demo.model.RolePermission">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <id column="role_id" jdbcType="INTEGER" property="roleId" />
+        <id column="permission_id" jdbcType="INTEGER" property="permissionId" />
+    </resultMap>
+
+    <insert id="save" parameterType="java.util.Objects">
+        insert into sys_role_permission (<include refid="insertFields"></include>) values
+        <foreach collection="permissionIds" item="permissionId" separator=",">
+            (#{roleId, jdbcType=INTEGER}, #{permissionId, jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <delete id="delete" parameterType="Long">
+        delete from sys_role_permission where permission_id = #{permissionId, jdbcType=INTEGER} or role_id = #{roleId, jdbcType=INTEGER}
+    </delete>
+</mapper>

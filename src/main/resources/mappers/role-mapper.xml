@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.RoleMapper">
+    <sql id="insertFields">
+        name, chinese_name
+    </sql>
+
+    <sql id="selectFields">
+        id, name, chinese_name
+    </sql>
+
+    <resultMap id="RoleMap" type="com.example.demo.model.Role">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="chinese_name" jdbcType="VARCHAR" property="chineseName" />
+        <collection property="permissions" ofType="com.example.demo.model.Permission">
+            <id column="p_id" jdbcType="INTEGER" property="id" />
+            <result column="p_name" jdbcType="VARCHAR" property="name"></result>
+            <result column="p_chinese_name" jdbcType="VARCHAR" property="chineseName"></result>
+        </collection>
+    </resultMap>
+
+    <insert parameterType="com.example.demo.model.Role" id="save" useGeneratedKeys="true"  keyProperty="id">
+        insert into role (<include refid="insertFields"></include>) values (#{name, jdbcType=VARCHAR}, #{chineseName, jdbcType=VARCHAR})
+    </insert>
+
+<!--    <update parameterType="com.example.demo.model.Role" id="update" useGeneratedKeys="true"  keyProperty="id">-->
+<!--        update role set-->
+<!--        <if test="name != null">-->
+<!--            `name` = #{name, jdbcType=VARCHAR}-->
+<!--        </if>-->
+<!--        <if test="name != null and chineseName != null">-->
+<!--            ,-->
+<!--        </if>-->
+<!--        <if test="chineseName != null">-->
+<!--            `chinese_name` = #{chineseName, jdbcType=VARCHAR}-->
+<!--        </if>-->
+<!--        where `id` = #{id, jdbcType=INTEGER};-->
+<!--    </update>-->
+
+    <select id="findById" parameterType="Long" resultMap="RoleMap">
+        select r.id, r.name, r.chinese_name, p.id as p_id, p.name as p_name, p.chinese_name as p_chinese_name
+        from role r left join sys_role_permission s on r.id = s.role_id
+        left join permission p on s.permission_id = p.id where r.id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="find" resultMap="RoleMap">
+        select r.id, r.name, r.chinese_name, p.id as p_id, p.name as p_name, p.chinese_name as p_chinese_name
+        from role r left join sys_role_permission s on r.id = s.role_id
+        left join permission p on s.permission_id = p.id
+    </select>
+
+
+    <delete id="delete" parameterType="Long">
+        delete from role where `id` = #{id, jdbcType=INTEGER}
+    </delete>
+</mapper>

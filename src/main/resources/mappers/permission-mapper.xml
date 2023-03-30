@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.PermissionMapper">
+    <sql id="insertFields">
+        name, chinese_name
+    </sql>
+
+    <sql id="selectFields">
+        id, name, chinese_name
+    </sql>
+
+    <resultMap id="PermissionMap" type="com.example.demo.model.Permission">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="chinese_name" jdbcType="VARCHAR" property="chineseName" />
+    </resultMap>
+
+
+    <insert id="save" parameterType="com.example.demo.model.Permission" useGeneratedKeys="true"  keyProperty="id">
+        insert into permission (<include refid="insertFields"></include>) values (#{name, jdbcType=VARCHAR},#{chineseName, jdbcType=VARCHAR});
+    </insert>
+
+    <insert id="update" parameterType="com.example.demo.model.Permission" useGeneratedKeys="true"  keyProperty="id">
+        update permission set
+        <if test="name != null">
+            `name` = #{name, jdbcType=VARCHAR}
+        </if>
+        <if test="name != null and chineseName != null">
+            ,
+        </if>
+        <if test="chineseName != null">
+            `chinese_name` = #{chineseName, jdbcType=VARCHAR}
+        </if>
+        where `id` = #{id, jdbcType=INTEGER};
+    </insert>
+
+    <select id="find" resultMap="PermissionMap">
+        select * from permission
+    </select>
+
+    <select parameterType="Long" id="findById" resultMap="PermissionMap">
+        select * from permission where `id` = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select parameterType="String" id="findByName" resultMap="PermissionMap">
+        <bind name="pattern" value="'%' + name + '%'" />
+        select * from permission where `name` like #{pattern, jdbcType=VARCHAR} or `chinese_name` like  #{pattern, jdbcType=VARCHAR}
+    </select>
+
+    <delete id="delete" parameterType="Long">
+        delete from permission where id = #{id, jdbcType=INTEGER}
+    </delete>
+</mapper>
