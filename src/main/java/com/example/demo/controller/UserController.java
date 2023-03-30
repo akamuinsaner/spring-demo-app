@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.model.Role;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,6 +16,8 @@ import java.util.Map;
 @RestController
 @RequestMapping
 public class UserController {
+
+    final static Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @Autowired
     UserService userService;
@@ -34,6 +38,7 @@ public class UserController {
 
     @GetMapping("/user/detailByName")
     public UserDetails findByUsername(@RequestParam("username") String username) {
+        logger.info("wqeqeeqwwrwqerewrwtrerterter");
         return userService.loadUserByUsername(username);
     };
 
