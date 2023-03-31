@@ -34,9 +34,9 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         }else {
             ObjectMapper objectMapper = new ObjectMapper();
             try {
-                Map<String, String> resultMap = objectMapper.readValue(request.getInputStream(), Map.class);
-                username = resultMap.get("username");
-                password = resultMap.get("password");
+                Map<String, Object> resultMap = objectMapper.readValue(request.getInputStream(), Map.class);
+                username = resultMap.get("username").toString();
+                password = resultMap.get("password").toString();
             } catch (IOException e) {
                 throw new AuthenticationServiceException(e.getMessage(), e);
             }

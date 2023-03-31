@@ -144,7 +144,7 @@ public class SecurityConfig {
                 .authenticationEntryPoint((req, resp, authException) -> {
                     resp.setContentType("application/json;charset=utf-8");
                     PrintWriter out = resp.getWriter();
-                    out.write("尚未登录，请先登录");
+                    out.write(authException.getMessage());
                     out.flush();
                     out.close();
                 }).and()
