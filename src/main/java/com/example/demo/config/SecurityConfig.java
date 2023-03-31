@@ -21,8 +21,12 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import com.example.demo.config.CustomAuthenticationFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -33,20 +37,11 @@ public class SecurityConfig {
     @Autowired
     UserService userService;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
-//    @Bean
-//    public UserDetailsService userDetailsService(PasswordEncoder encoder) {
-//        return username -> {
-//            User user = userRepo.findByUsername(username);
-//            if (user != null) return user;
-//            throw new UsernameNotFoundException("用户不存在");
-//        };
-//    }
-
+    @Autowired
+    CustomAuthenticationManager customAuthenticationManager;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -62,11 +57,34 @@ public class SecurityConfig {
     }
 
 
-    @Bean
-    public AuthenticationManager authenticationManagerBean(HttpSecurity http) throws Exception {
-        AuthenticationManagerBuilder authenticationManagerBuilder = http.getSharedObject(AuthenticationManagerBuilder.class);
-        authenticationManagerBuilder.userDetailsService(userService).passwordEncoder(passwordEncoder());
-        return authenticationManagerBuilder.build();
+    CustomAuthenticationFilter customAuthenticationFilter() {
+        CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
+        filter.setAuthenticationManager(customAuthenticationManager);
+        filter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                Object principal = authentication.getPrincipal();
+                response.setContentType("application/json;charset=utf-8");
+                PrintWriter out = response.getWriter();
+                ObjectMapper mapper = new ObjectMapper();
+                out.write(mapper.writeValueAsString(ResultData.success(customAuthenticationManager.getUserDetails())));
+                out.flush();
+                out.close();
+            }
+        });
+        filter.setAuthenticationFailureHandler(new AuthenticationFailureHandler() {
+            @Override
+            public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
+                response.setContentType("application/json;charset=utf-8");
+                PrintWriter out = response.getWriter();
+                ObjectMapper mapper = new ObjectMapper();
+                out.write(mapper.writeValueAsString(ResultData.fail(exception.getMessage())));
+                out.flush();
+                out.close();
+            }
+        });
+        filter.setFilterProcessesUrl("/login");
+        return filter;
     }
 
 
@@ -75,35 +93,35 @@ public class SecurityConfig {
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
         requestCache.setMatchingRequestParameterName("continue");
         return http
+                .authenticationManager(customAuthenticationManager)
+                .addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests()
-//                .requestMatchers("/admin/**").hasRole("admin")
-//                .requestMatchers("/user/**").hasRole("user")
                 .requestMatchers("/", "/**").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
                 .formLogin()
 //                .loginPage("/login.html")
-                .loginProcessingUrl("/login")
+//                .loginProcessingUrl("/login")
 //                .usernameParameter("name")
 //                .passwordParameter("passwd")
 //                .defaultSuccessUrl("/hello")
 //                .successForwardUrl("/hello")
-                .successHandler((req, resp, authentication) ->{
-                    Object principal = authentication.getPrincipal();
-                    resp.setContentType("application/json;charset=utf-8");
-                    PrintWriter out = resp.getWriter();
-                    out.write(new ObjectMapper().writeValueAsString(principal));
-                    out.flush();
-                    out.close();
-                })
-                .failureHandler((req, resp, e) -> {
-                    resp.setContentType("application/json;charset=utf-8");
-                    PrintWriter out = resp.getWriter();
-                    out.write(e.getMessage());
-                    out.flush();
-                    out.close();
-                })
+//                .successHandler((req, resp, authentication) ->{
+//                    Object principal = authentication.getPrincipal();
+//                    resp.setContentType("application/json;charset=utf-8");
+//                    PrintWriter out = resp.getWriter();
+//                    out.write(new ObjectMapper().writeValueAsString(principal));
+//                    out.flush();
+//                    out.close();
+//                })
+//                .failureHandler((req, resp, e) -> {
+//                    resp.setContentType("application/json;charset=utf-8");
+//                    PrintWriter out = resp.getWriter();
+//                    out.write(e.getMessage());
+//                    out.flush();
+//                    out.close();
+//                })
                 .permitAll()
                 .and()
                 .logout()
