@@ -22,10 +22,12 @@ public class DataSourceConfig {
     @Value("${spring.datasource.password}")
     private String password;
 
+
     @Bean
     public DataSource dataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
         dataSourceBuilder.driverClassName(driverClassName);
+        System.out.println(driverClassName);
         dataSourceBuilder.url(url);
         dataSourceBuilder.username(username);
         dataSourceBuilder.password(password);
