@@ -22,25 +22,14 @@ import java.util.Optional;
 public class CustomAuthenticationManager implements AuthenticationManager {
 
     @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private UserService userService;
-
-    private UserDetails userDetails;
+    CustomAuthenticationProvider customAuthenticationProvider;
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        UserDetails user = userService.loadUserByUsername(authentication.getName());
-        if (user != null) {
-            if (passwordEncoder.matches(authentication.getCredentials().toString(), user.getPassword())) {
-                this.userDetails = user;
-                return new UsernamePasswordAuthenticationToken(authentication.getPrincipal(), authentication.getCredentials());
-            } else {
-                throw new BadCredentialsException("Wrong Password");
-            }
-        } else {
-            throw new BadCredentialsException("Wrong Username");
+        try {
+            return customAuthenticationProvider.authenticate(authentication);
+        } catch (BadCredentialsException e) {
+            throw new BadCredentialsException(e.getMessage());
         }
     }
 

@@ -26,6 +26,7 @@
         </encoder>
     </appender>
     <logger name="com.example.demo.controller" level="DEBUG" />
+    <logger name="org.springframework.security" level="TRACE" />
     <springProfile name="prod">
         <root level="info">
             <appender-ref ref="FILEOUTPUT" />

@@ -43,6 +43,9 @@ public class SecurityConfig {
     @Autowired
     CustomAuthenticationManager customAuthenticationManager;
 
+    @Autowired
+    CustomAuthenticationProvider customAuthenticationProvider;
+
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
         // web.ignoring() 用来配置忽略掉的 URL 地址，一般对于静态文件，我们可以采用此操作。
@@ -59,6 +62,7 @@ public class SecurityConfig {
 
     CustomAuthenticationFilter customAuthenticationFilter() {
         CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
+        customAuthenticationManager.setCustomAuthenticationProvider(customAuthenticationProvider);
         filter.setAuthenticationManager(customAuthenticationManager);
         filter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
             @Override
@@ -67,7 +71,7 @@ public class SecurityConfig {
                 response.setContentType("application/json;charset=utf-8");
                 PrintWriter out = response.getWriter();
                 ObjectMapper mapper = new ObjectMapper();
-                out.write(mapper.writeValueAsString(ResultData.success(customAuthenticationManager.getUserDetails())));
+                out.write("登录成功");
                 out.flush();
                 out.close();
             }
@@ -94,9 +98,14 @@ public class SecurityConfig {
         requestCache.setMatchingRequestParameterName("continue");
         return http
                 .authenticationManager(customAuthenticationManager)
+                .authenticationProvider(customAuthenticationProvider)
                 .addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .csrf().disable()
+                .cors()
+                .and()
                 .authorizeHttpRequests()
-                .requestMatchers("/**").permitAll()
+//                .requestMatchers("/role/**").anonymous()
+                .requestMatchers("/", "/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -139,7 +148,7 @@ public class SecurityConfig {
                 .invalidateHttpSession(true)
                 .permitAll()
                 .and()
-                .csrf().disable().exceptionHandling()
+                .exceptionHandling()
                 .authenticationEntryPoint((req, resp, authException) -> {
                     resp.setContentType("application/json;charset=utf-8");
                     PrintWriter out = resp.getWriter();
