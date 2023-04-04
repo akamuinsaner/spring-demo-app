@@ -12,8 +12,13 @@ import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.access.vote.RoleHierarchyVoter;
+import org.springframework.security.authentication.AnonymousAuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.core.Authentication;
@@ -24,12 +29,17 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.DelegatingSecurityContextRepository;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
+import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.example.demo.config.CustomAuthenticationFilter;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.List;
 
 @Configuration
 public class SecurityConfig {
@@ -41,10 +51,8 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder;
 
     @Autowired
-    CustomAuthenticationManager customAuthenticationManager;
+    private ObjectMapper objectMapper;
 
-    @Autowired
-    CustomAuthenticationProvider customAuthenticationProvider;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -60,18 +68,30 @@ public class SecurityConfig {
     }
 
 
+    private AuthenticationManager authenticationManager() {
+        List<AuthenticationProvider> providers = new ArrayList<AuthenticationProvider>();
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
+        daoAuthenticationProvider.setUserDetailsService(userService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+        providers.add(daoAuthenticationProvider);
+        AuthenticationManager manager = new ProviderManager(providers);
+        return manager;
+    }
+
+
     CustomAuthenticationFilter customAuthenticationFilter() {
         CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
-        customAuthenticationManager.setCustomAuthenticationProvider(customAuthenticationProvider);
-        filter.setAuthenticationManager(customAuthenticationManager);
+        filter.setAuthenticationManager(authenticationManager());
+        filter.setSecurityContextRepository(new DelegatingSecurityContextRepository(
+                new RequestAttributeSecurityContextRepository(),
+                new HttpSessionSecurityContextRepository()));
         filter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
             @Override
             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
                 Object principal = authentication.getPrincipal();
                 response.setContentType("application/json;charset=utf-8");
                 PrintWriter out = response.getWriter();
-                ObjectMapper mapper = new ObjectMapper();
-                out.write("登录成功");
+                out.write(objectMapper.writeValueAsString(ResultData.success(principal)));
                 out.flush();
                 out.close();
             }
@@ -81,8 +101,7 @@ public class SecurityConfig {
             public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
                 response.setContentType("application/json;charset=utf-8");
                 PrintWriter out = response.getWriter();
-                ObjectMapper mapper = new ObjectMapper();
-                out.write(mapper.writeValueAsString(ResultData.fail(exception.getMessage())));
+                out.write(objectMapper.writeValueAsString(ResultData.fail(exception.getMessage())));
                 out.flush();
                 out.close();
             }
@@ -97,15 +116,13 @@ public class SecurityConfig {
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
         requestCache.setMatchingRequestParameterName("continue");
         return http
-                .authenticationManager(customAuthenticationManager)
-                .authenticationProvider(customAuthenticationProvider)
                 .addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .csrf().disable()
                 .cors()
                 .and()
                 .authorizeHttpRequests()
 //                .requestMatchers("/role/**").anonymous()
-                .requestMatchers("/", "/**").permitAll()
+//                .requestMatchers("/", "/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
@@ -152,7 +169,8 @@ public class SecurityConfig {
                 .authenticationEntryPoint((req, resp, authException) -> {
                     resp.setContentType("application/json;charset=utf-8");
                     PrintWriter out = resp.getWriter();
-                    out.write(authException.getMessage());
+
+                    out.write(objectMapper.writeValueAsString(ResultData.fail(authException.getMessage())));
                     out.flush();
                     out.close();
                 }).and()
