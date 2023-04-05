@@ -30,6 +30,9 @@ public class User implements UserDetails {
     @Transient
     private List<Permission> permissions;
 
+    @Transient
+    private String token;
+
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
     @JsonIgnoreProperties({"users"})
     private Set<Role> roles = new HashSet<>();

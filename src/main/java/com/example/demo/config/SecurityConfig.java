@@ -1,13 +1,17 @@
 package com.example.demo.config;
 
+import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+import com.example.demo.utils.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.ibatis.util.MapUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
 import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
@@ -21,6 +25,7 @@ import org.springframework.security.config.annotation.authentication.builders.Au
 import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -35,11 +40,14 @@ import org.springframework.security.web.context.RequestAttributeSecurityContextR
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import com.example.demo.config.CustomAuthenticationFilter;
+import org.springframework.util.ObjectUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Configuration
 public class SecurityConfig {
@@ -52,6 +60,12 @@ public class SecurityConfig {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired
+    private JwtUtils jwtUtils;
+
+    @Autowired
+    AuthenticationJwtTokenFilter authenticationJwtTokenFilter;
 
 
     @Bean
@@ -79,6 +93,8 @@ public class SecurityConfig {
     }
 
 
+
+
     CustomAuthenticationFilter customAuthenticationFilter() {
         CustomAuthenticationFilter filter = new CustomAuthenticationFilter();
         filter.setAuthenticationManager(authenticationManager());
@@ -88,7 +104,9 @@ public class SecurityConfig {
         filter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
             @Override
             public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-                Object principal = authentication.getPrincipal();
+                User principal = (User) authentication.getPrincipal();
+                String token = jwtUtils.generateJwtToken(authentication);
+                principal.setToken(token);
                 response.setContentType("application/json;charset=utf-8");
                 PrintWriter out = response.getWriter();
                 out.write(objectMapper.writeValueAsString(ResultData.success(principal)));
@@ -112,43 +130,24 @@ public class SecurityConfig {
 
 
     @Bean
+    @Order(2)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         HttpSessionRequestCache requestCache = new HttpSessionRequestCache();
         requestCache.setMatchingRequestParameterName("continue");
         return http
                 .addFilterAt(customAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(authenticationJwtTokenFilter, CustomAuthenticationFilter.class)
                 .csrf().disable()
                 .cors()
+                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeHttpRequests()
 //                .requestMatchers("/role/**").anonymous()
 //                .requestMatchers("/", "/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .formLogin()
-//                .loginPage("/login.html")
-//                .loginProcessingUrl("/login")
-//                .usernameParameter("name")
-//                .passwordParameter("passwd")
-//                .defaultSuccessUrl("/hello")
-//                .successForwardUrl("/hello")
-//                .successHandler((req, resp, authentication) ->{
-//                    Object principal = authentication.getPrincipal();
-//                    resp.setContentType("application/json;charset=utf-8");
-//                    PrintWriter out = resp.getWriter();
-//                    out.write(new ObjectMapper().writeValueAsString(principal));
-//                    out.flush();
-//                    out.close();
-//                })
-//                .failureHandler((req, resp, e) -> {
-//                    resp.setContentType("application/json;charset=utf-8");
-//                    PrintWriter out = resp.getWriter();
-//                    out.write(e.getMessage());
-//                    out.flush();
-//                    out.close();
-//                })
-                .permitAll()
-                .and()
+                .httpBasic().and()
                 .logout()
                 .logoutUrl("/logout")
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "POST"))
