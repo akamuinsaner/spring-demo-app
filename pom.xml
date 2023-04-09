@@ -15,6 +15,9 @@
 	<description>Demo project for Spring Boot</description>
 	<properties>
 		<java.version>17</java.version>
+		<datasource.username>wangshuai</datasource.username>
+		<datasource.password>ElCid_wang0817</datasource.password>
+		<datasource.url>jdbc:mysql://101.42.247.31:3306/${profile.active}</datasource.url>
 	</properties>
 
 	<dependencies>
@@ -101,6 +104,12 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+			<version>3.0.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -135,9 +144,9 @@
 				<artifactId>flyway-maven-plugin</artifactId>
 				<version>9.8.1</version>
 				<configuration>
-					<url>jdbc:mysql://localhost:3306/demo</url>
-					<user>root</user>
-					<password>admin</password>
+					<url>${datasource.url}</url>
+					<user>${datasource.username}</user>
+					<password>${datasource.password}</password>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -167,6 +176,12 @@
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
+		</profile>
+		<profile>
+			<id>test</id>
+			<properties>
+				<profile.active>test</profile.active>
+			</properties>
 		</profile>
 		<profile>
 			<id>prod</id>

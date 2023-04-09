@@ -144,7 +144,7 @@ public class SecurityConfig {
                 .and()
                 .authorizeHttpRequests()
 //                .requestMatchers("/role/**").anonymous()
-//                .requestMatchers("/", "/**").permitAll()
+                .requestMatchers("/register").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .httpBasic().and()
