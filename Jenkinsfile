@@ -38,14 +38,18 @@ pipeline {
         stage('Docker build') {
             steps {
                 sh """
-                echo docker build
-            """
+                    echo docker build
+                """
             }
 
         }
 
         stage ('Deploy') {
-
+            steps {
+                sh """
+                    echo deploy
+                """
+            }
         }
     }
 }
