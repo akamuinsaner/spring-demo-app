@@ -13,7 +13,7 @@ pipeline {
 
                 sh "pwd && ls -l"
                 sh "echo ${branch}"
-                checkout scmGit(branches: [[name: '*/test']], extensions: [], userRemoteConfigs: [[credentialsId: 'tenxuncloud', url: 'https://github.com/akamuinsaner/spring-demo-app.git']])
+                checkout scm
             }
 
 
