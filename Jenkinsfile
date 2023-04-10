@@ -29,11 +29,7 @@ pipeline {
         stage('Mvn package') {
 
             steps {
-                if ("${branch}" == "master") {
-                    profile = "prod"
-                } else {
-                    profile = "test"
-                }
+
                 sh "mvn clean package -DskipTests -P${profile}"
             }
 
