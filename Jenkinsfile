@@ -13,7 +13,7 @@ pipeline {
 
                 sh "pwd && ls -l"
                 sh "echo ${branch}"
-                checkout scmGit(branches: [[name: '*/test']], extensions: [], userRemoteConfigs: [[credentialsId: '2d6ec0c8-2cca-456d-8eb7-0d9017a125e5', url: 'https://github.com/akamuinsaner/spring-demo-app.git']])
+                checkout scm
             }
 
 
@@ -27,12 +27,13 @@ pipeline {
         }
 
         stage('Mvn package') {
-            if ("${branch}" == "master") {
-                profile = "master"
-            } else {
-                profile = "test"
-            }
+
             steps {
+                if ("${branch}" == "master") {
+                    profile = "prod"
+                } else {
+                    profile = "test"
+                }
                 sh "mvn clean package -DskipTests -P${profile}"
             }
 
