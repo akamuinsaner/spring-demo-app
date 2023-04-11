@@ -3,7 +3,7 @@
 pipeline {
     agent any
 
-    paramaters {
+    parameters {
         string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
     }
 
