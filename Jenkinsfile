@@ -1,12 +1,7 @@
 
 
 pipeline {
-    agent {
-        docker {
-            image 'maven:3.9.0-eclipse-temurin-11'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
+    agent any
 
     parameters {
         string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
@@ -22,18 +17,12 @@ pipeline {
 
         }
 
-        stage('Test') {
-            steps {
-                sh """
-                    pwd
-                    ls -l
-                    mvn -v
-                    mvn test
-                    
-                 """
-            }
-
-        }
+//        stage('Test') {
+//            steps {
+//                sh "mvn test"
+//            }
+//
+//        }
 
         stage('Mvn package') {
 
@@ -47,7 +36,7 @@ pipeline {
         stage('Docker build') {
             steps {
                 sh """
-                    echo docker build
+                    docker build --build-arg PROFILE=test -t wangshuai/spring-app .
                 """
             }
 
