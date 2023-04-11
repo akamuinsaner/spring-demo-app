@@ -24,14 +24,18 @@ pipeline {
 //
 //        }
 
-        stage('Mvn package') {
-
-            steps {
-
-                sh "mvn clean package -DskipTests -P${profile}"
-            }
-
-        }
+//        stage('Mvn package') {
+//
+//            steps {
+//                if ("${param.Branch}" == "test") {
+//                    profile = "test"
+//                } else {
+//                    profile = ""
+//                }
+//                sh "mvn clean package -DskipTests -P${profile}"
+//            }
+//
+//        }
 
         stage('Docker build') {
             steps {
