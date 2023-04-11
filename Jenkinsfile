@@ -39,7 +39,7 @@ pipeline {
 
         stage('Docker build') {
             steps {
-                sh 'docker build --build-arg PROFILE=test -t wangshuai/spring-app .'
+                sh 'docker build --build-arg PROFILE=test -t akamuinsaner/spring-app .'
             }
 
         }
