@@ -17,12 +17,12 @@ pipeline {
 
         }
 
-//        stage('Test') {
-//            steps {
-//                sh "mvn test"
-//            }
-//
-//        }
+        stage('Test') {
+            steps {
+                sh 'echo test'
+            }
+
+        }
 
 //        stage('Mvn package') {
 //
@@ -39,18 +39,14 @@ pipeline {
 
         stage('Docker build') {
             steps {
-                sh """
-                    docker build --build-arg PROFILE=test -t wangshuai/spring-app .
-                """
+                sh 'docker build --build-arg PROFILE=test -t wangshuai/spring-app .'
             }
 
         }
 
         stage ('Deploy') {
             steps {
-                sh """
-                    echo deploy
-                """
+                sh 'echo deploy'
             }
         }
     }
