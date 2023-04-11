@@ -3,16 +3,14 @@
 pipeline {
     agent any
 
-    environment {
-        branch = 'test';
+    paramaters {
+        string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
     }
 
     stages {
         stage('Git Clone') {
             steps {
-
-                sh "pwd && ls -l"
-                sh "echo ${branch}"
+                echo "${params.Branch}"
                 checkout scm
             }
 
