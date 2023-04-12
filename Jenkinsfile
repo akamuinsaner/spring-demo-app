@@ -1,11 +1,11 @@
 
 
-pipeline {
+node {
     agent any
 
     tools {
         // Install the Maven version configured as "M3" and add it to the path.
-        maven "M3"
+        maven "Maven"
     }
 
     def profile
@@ -21,8 +21,6 @@ pipeline {
             steps {
                 checkout scm
             }
-
-
         }
 
         stage('Test') {
@@ -32,12 +30,13 @@ pipeline {
         }
 
        stage('Mvn package') {
+           if ("${param.Branch}" == "test") {
+                profile = "test"
+           } else {
+                profile = "prod"
+           }
            steps {
-               if ("${param.Branch}" == "test") {
-                   profile = "test"
-               } else {
-                   profile = "prod"
-               }
+
                sh "mvn clean package -DskipTests -P$profile"
            }
        }
