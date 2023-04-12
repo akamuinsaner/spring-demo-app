@@ -7,6 +7,8 @@ pipeline {
         string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
     }
 
+
+
     stages {
         stage('Git Clone') {
             steps {
@@ -19,7 +21,13 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                sh """
+                    export MAVEN_HOME=$MAVEN_HOME
+                    export PATH=$PATH:$MAVEN_HOME/bin
+                    mvn --version
+                    mvn test
+                """
+
             }
 
         }
