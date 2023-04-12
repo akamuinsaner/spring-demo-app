@@ -23,7 +23,7 @@ pipeline {
             steps {
                 sh """
                     export MAVEN_HOME=$MAVEN_HOME
-                    export PATH=$PATH:$MAVEN_HOME/bin
+                    export PATH=$MAVEN_HOME/bin:$PATH
                     mvn --version
                     mvn test
                 """
