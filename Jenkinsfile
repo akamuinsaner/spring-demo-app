@@ -2,11 +2,6 @@
 
 node {
 
-    tools {
-        // Install the Maven version configured as "M3" and add it to the path.
-        maven "Maven"
-    }
-
     def profile
 
     parameters {
@@ -23,6 +18,8 @@ node {
         }
 
         stage('Test') {
+            env.MAVEN_HOME="$MAVEN_HOME"
+            env.PATH="${env.MAVEN_HOME}/bin:${env.PATH}"
             steps {
                 sh 'mvn test'
             }
