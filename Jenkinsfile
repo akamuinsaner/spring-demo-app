@@ -3,7 +3,7 @@
 def profile = "test"
 
 pipeline {
-
+    agent any
     tools {
         maven 'Maven'
     }
