@@ -9,9 +9,6 @@ pipeline {
         maven 'Maven'
     }
 
-    environment {
-        JAVA_HOME = "${ tool 'JDK17' }"
-    }
 
     parameters {
         string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
@@ -28,12 +25,7 @@ pipeline {
 
             steps {
                 sh """
-                    echo "${PATH}"
-                    echo "${MAVEN_HOME}"
-                    echo "${JAVA_HOME}"
-                    echo "${M2_HOME}"
-                    java -version
-                    export JAVA_HOME=${JAVA_HOME}
+                    export JAVA_HOME="${ tool 'JDK17' }"
                     export PATH=${JAVA_HOME}/bin:${PATH}
                     mvn test
                 """
