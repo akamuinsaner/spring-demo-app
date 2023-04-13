@@ -4,7 +4,11 @@ def profile = "test"
 
 pipeline {
     agent {
-        docker { image 'maven:3.9-sapmachine-17' }
+        docker { image 'eclipse-temurin:17-jdk-alpine' }
+    }
+
+    tools {
+        maven 'Maven'
     }
 
 
@@ -22,8 +26,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh """
-                    export JAVA_HOME="${ tool 'JDK17' }"
-                    export PATH=${JAVA_HOME}/bin:${PATH}
+\\
                     mvn test
                 """
             }
