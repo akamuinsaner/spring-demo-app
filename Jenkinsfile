@@ -1,8 +1,9 @@
 
 
-node {
+def profile = "test"
 
-    def profile
+pipeline {
+    agent any
 
     parameters {
         string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
@@ -15,11 +16,11 @@ node {
             steps {
                 checkout scm
             }
+
+
         }
 
         stage('Test') {
-            env.MAVEN_HOME="$MAVEN_HOME"
-            env.PATH="${env.MAVEN_HOME}/bin:${env.PATH}"
             steps {
                 sh 'mvn test'
             }
@@ -27,12 +28,11 @@ node {
 
        stage('Mvn package') {
            if ("${param.Branch}" == "test") {
-                profile = "test"
+               profile = "test"
            } else {
-                profile = "prod"
+               profile = "prod"
            }
            steps {
-
                sh "mvn clean package -DskipTests -P$profile"
            }
        }
