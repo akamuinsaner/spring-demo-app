@@ -4,7 +4,7 @@ def profile = "test"
 
 pipeline {
     agent {
-        any { image 'maven:3.9-sapmachine-17' }
+        docker { image 'maven:3.9-sapmachine-17' }
     }
 
 
