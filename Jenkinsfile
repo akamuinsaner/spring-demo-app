@@ -29,6 +29,7 @@ pipeline {
                     echo "${MAVEN_HOME}"
                     echo "${JAVA_HOME}"
                     echo "${M2_HOME}"
+                    echo java -version
                     mvn test
                 """
             }
