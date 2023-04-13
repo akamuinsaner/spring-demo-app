@@ -3,9 +3,6 @@
 def profile = "test"
 
 pipeline {
-    agent {
-        docker { image 'eclipse-temurin:17-jdk-alpine' }
-    }
 
     tools {
         maven 'Maven'
