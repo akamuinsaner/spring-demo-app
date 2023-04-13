@@ -22,7 +22,15 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'mvn test'
+                sh """
+                    echo ${MAVEN_HOME}
+                    echo ${PATH}
+                    echo ${env.MAVEN_HOME}
+                    echo ${env.PATH}
+                    export MAVEN_HOME=${env.MAVEN_HOME}
+                    export PATH=${MAVEN_HOME}/bin:${PATH}
+                    mvn test
+                """
             }
         }
 
