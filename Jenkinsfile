@@ -22,8 +22,7 @@ pipeline {
         }
 
         stage('Test') {
-            env.JAVA_HOME="${tool 'jdk'}"
-            env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
+
             steps {
                 sh """
                     echo "${PATH}"
