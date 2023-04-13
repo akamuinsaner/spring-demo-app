@@ -20,11 +20,14 @@ pipeline {
             steps {
                 sh """
                     echo ${MAVEN_HOME}
+                    echo ${JAVA_HOME}
                     echo ${PATH}
                     echo ${env.MAVEN_HOME}
+                    echo ${env.JAVA_HOME}
                     echo ${env.PATH}
+                    export JAVA_HOME=${env.JAVA_HOME}
                     export MAVEN_HOME=${env.MAVEN_HOME}
-                    export PATH=${PATH}:${MAVEN_HOME}/bin
+                    export PATH=${PATH}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin
                     mvn test
                 """
             }
