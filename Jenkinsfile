@@ -30,6 +30,8 @@ pipeline {
                     echo "${JAVA_HOME}"
                     echo "${M2_HOME}"
                     java -version
+                    export JAVA_HOME=${JAVA_HOME}
+                    export PATH=${JAVA_HOME}/bin:${PATH}
                     mvn test
                 """
             }
