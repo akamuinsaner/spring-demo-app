@@ -3,10 +3,8 @@
 def profile = "test"
 
 pipeline {
-    agent any
-
-    tools {
-        maven 'Maven'
+    agent {
+        docker { image 'maven:3.9-sapmachine-17' }
     }
 
 
@@ -22,8 +20,6 @@ pipeline {
         }
 
         stage('Test') {
-            env.JAVA_HOME="${tool 'JDK17'}"
-            env.PATH="${env.JAVA_HOME}/bin:${env.PATH}"
             steps {
                 sh """
                     export JAVA_HOME="${ tool 'JDK17' }"
