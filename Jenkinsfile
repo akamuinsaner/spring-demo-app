@@ -26,8 +26,7 @@ pipeline {
                     echo ${env.MAVEN_HOME}
                     echo ${env.PATH}
                     export MAVEN_HOME=${env.MAVEN_HOME}
-                    export PATH=${MAVEN_HOME}/bin:${PATH}
-                    ln –s ${MAVEN_HOME}/mvn /usr/bin/mvn
+                    export PATH=${PATH}:${M2_HOME}/bin
                     mvn test
                 """
             }
