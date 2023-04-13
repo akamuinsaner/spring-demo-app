@@ -16,8 +16,6 @@ pipeline {
             steps {
                 checkout scm
             }
-
-
         }
 
         stage('Test') {
@@ -35,11 +33,6 @@ pipeline {
         }
 
        stage('Mvn package') {
-           if ("${param.Branch}" == "test") {
-               profile = "test"
-           } else {
-               profile = "prod"
-           }
            steps {
                sh "mvn clean package -DskipTests -P$profile"
            }
