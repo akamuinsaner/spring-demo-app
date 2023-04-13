@@ -5,6 +5,11 @@ def profile = "test"
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven 3.9.1'
+        jdk 'jdk17'
+    }
+
     parameters {
         string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
     }
