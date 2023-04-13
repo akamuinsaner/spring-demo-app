@@ -10,7 +10,7 @@ pipeline {
     }
 
     environment {
-        JAVA_HOME = ${ tool 'JDK17' }
+        JAVA_HOME = "${ tool 'JDK17' }"
     }
 
     parameters {
