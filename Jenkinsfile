@@ -9,7 +9,9 @@ pipeline {
         string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
     }
 
-
+    tools {
+        maven 'MAVEN 3.9.1'
+    }
 
     stages {
         stage('Git Clone') {
