@@ -28,7 +28,7 @@ pipeline {
                     export JAVA_HOME=${env.JAVA_HOME}
                     export MAVEN_HOME=${env.MAVEN_HOME}
                     export PATH=${PATH}:${JAVA_HOME}/bin:${MAVEN_HOME}/bin
-                    mvn test
+                    /usr/bin/mvn test
                 """
             }
         }
