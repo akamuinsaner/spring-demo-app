@@ -10,6 +10,10 @@ pipeline {
         jdk 'JDK17'
     }
 
+    environment {
+        JAVA_HOME = 'tool JDK17'
+    }
+
     parameters {
         string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
     }
