@@ -46,7 +46,7 @@ pipeline {
         stage('Docker push') {
             steps {
                 sh """
-                    docker login https://hub.docker.com/ -u akamuinsaner -p ElCid_wang0817
+                    docker login --username akamuinsaner --password ElCid_wang0817
                     docker push akamuinsaner/spring-app:${profile}
                 """
             }
