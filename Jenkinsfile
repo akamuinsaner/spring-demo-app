@@ -7,6 +7,8 @@ pipeline {
 
     environment {
         PROFILE = "${params.BRANCH == "master" ? "prod" : "test"}"
+        PREFIX = "spring-app"
+        PROJECT_NAME = 'akamuinsaner'
     }
 
     stages {
@@ -33,7 +35,7 @@ pipeline {
         stage('Docker build') {
             steps {
                 sh """
-                    docker build --build-arg PROFILE=${env.PROFILE} -t akamuinsaner/spring-app-${env.PROFILE} .
+                    docker build --build-arg PROFILE=${env.PROFILE} -t ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE} .
                 """
             }
         }
@@ -43,10 +45,14 @@ pipeline {
                 expression { params.BRANCH == 'master' }
             }
             steps {
-                sh """
-                    docker login --username akamuinsaner --password ElCid_wang0817
-                    docker push akamuinsaner/spring-app-${env.PROFILE}
-                """
+                withCredentials([string(credentialsId: 'hub.docker', passwordVariable: 'password', usernameVariable: 'username')]) {
+                    sh """
+                        docker login --username ${username} --password ${password}
+                        docker push ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}
+                        docker rmi ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}
+                    """
+                }
+
             }
         }
 
