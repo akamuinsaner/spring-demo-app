@@ -60,7 +60,7 @@ pipeline {
             steps {
                 sh """
                    docker pull ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}
-                   docker run -p 8888:8888 ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}
+                   docker run -p 8888:8888 ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}:latest
                 """
             }
         }
