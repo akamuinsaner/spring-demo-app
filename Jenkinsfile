@@ -21,31 +21,35 @@ pipeline {
             }
         }
 
-//        stage('Test') {
-//            steps {
-//                sh """
-//                    mvn -v
-//                    mvn test
-//                """
-//            }
-//        }
+        stage('Test') {
+            steps {
+                sh """
+                    mvn test
+                """
+            }
+        }
 
        stage('Mvn package') {
            steps {
-               sh """
-                    echo ${env.JAVA_HOME}
-                    echo ${env.MAVEN_HOME}
-                    echo ${env.PATH}
-                    mvn clean package -DskipTests -P$profile
-                """
+               sh "mvn clean package -DskipTests -P$profile"
            }
        }
 
         stage('Docker build') {
             steps {
-                sh 'docker build --build-arg PROFILE=test -t akamuinsaner/spring-app .'
+                sh """
+                    docker build --build-arg PROFILE=${profile} -t akamuinsaner/spring-app:${profile} .
+                """
             }
+        }
 
+        stage('Docker push') {
+            steps {
+                sh """
+                    docker login https://hub.docker.com/ -u akamuinsaner -p ElCid_wang0817
+                    docker push akamuinsaner/spring-app:${profile}
+                """
+            }
         }
 
         stage ('Deploy') {
