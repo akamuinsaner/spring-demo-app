@@ -63,7 +63,6 @@ pipeline {
                 }
                 sh """
                      echo ${CONTAINER_ID}
-                     docker stop ${CONTAINER_ID}
                      docker run -d -p 8443:8888 ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE}:${env.BUILD_ID}
                  """
             }
