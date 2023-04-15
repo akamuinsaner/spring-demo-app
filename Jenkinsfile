@@ -11,7 +11,7 @@ pipeline {
 
 
     parameters {
-        string(name: 'Branch', defaultValue: 'test', description: 'the branch to build')
+        choices(name: 'BRANCH', choices: ['test', 'master'], description: 'the branch to build')
     }
 
     stages {
@@ -38,16 +38,19 @@ pipeline {
         stage('Docker build') {
             steps {
                 sh """
-                    docker build --build-arg PROFILE=${profile} -t akamuinsaner/spring-app:${profile} .
+                    docker build --build-arg PROFILE=${profile} -t akamuinsaner/spring-app-${profile} .
                 """
             }
         }
 
         stage('Docker push') {
+            when {
+                expression { params.BRANCH == 'master' }
+            }
             steps {
                 sh """
                     docker login --username akamuinsaner --password ElCid_wang0817
-                    docker push akamuinsaner/spring-app:${profile}
+                    docker push akamuinsaner/spring-app-${profile}
                 """
             }
         }
