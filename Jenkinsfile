@@ -21,7 +21,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh """
-                    mvn test -P${env.PROFILE}
+                    mvn test
                 """
             }
         }
