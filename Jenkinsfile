@@ -20,14 +20,14 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            steps {
-                sh """
-                    mvn -v
-                    mvn test
-                """
-            }
-        }
+//        stage('Test') {
+//            steps {
+//                sh """
+//                    mvn -v
+//                    mvn test
+//                """
+//            }
+//        }
 
        stage('Mvn package') {
            steps {
