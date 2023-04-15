@@ -32,7 +32,12 @@ pipeline {
 
        stage('Mvn package') {
            steps {
-               sh "mvn clean package -DskipTests -P$profile"
+               sh """
+                    echo ${env.JAVA_HOME}
+                    echo ${env.MAVEN_HOME}
+                    echo ${env.PATH}
+                    mvn clean package -DskipTests -P$profile
+                """
            }
        }
 
