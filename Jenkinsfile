@@ -1,5 +1,5 @@
-pipeline {
-    agent any
+node {
+
     tools {
         maven 'Maven'
         jdk 'JDK17'
@@ -12,56 +12,47 @@ pipeline {
 
     stages {
         stage('Git Clone') {
-            steps {
-                checkout scm
-            }
+            checkout scm
         }
 
         stage('Test') {
-            steps {
-                sh """
+            sh """
                     mvn test
                 """
-            }
         }
 
        stage('Mvn package') {
-           steps {
-               sh "mvn clean package -DskipTests -P${env.PROFILE}"
-           }
+           sh "mvn clean package -DskipTests -P${env.PROFILE}"
        }
 
         stage('Docker build') {
-            steps {
-                sh """
+            sh """
                     docker build --build-arg PROFILE=${env.PROFILE} -t ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE}:${env.BUILD_ID} .
                 """
-            }
         }
 
         stage('Docker push') {
             when {
                 expression { params.BRANCH == 'master' }
             }
-            steps {
-                withCredentials([string(credentialsId: 'hub.docker', passwordVariable: 'password', usernameVariable: 'username')]) {
-                    sh """
+            withCredentials([string(credentialsId: 'hub.docker', passwordVariable: 'password', usernameVariable: 'username')]) {
+                sh """
                         docker login --username ${username} --password ${password}
                         docker push ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE}:${env.BUILD_ID}
 
                     """
-                }
-
             }
         }
 
         stage ('Deploy') {
 
-            steps {
-                script {
-                    CONTAINER_ID = sh script: "docker ps -a | grep -0e ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE} | cut -c1-10", returnStdout: true
-                }
-            }
+            CONTAINER_ID = sh(script: "docker ps -a | grep -0e ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE} | cut -c1-10", returnStdout: true)
+            sh """
+                     echo ${CONTAINER_ID}
+                     docker stop ${CONTAINER_ID}
+                     echo ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE}:${env.BUILD_ID}
+                     docker run -d -p 8443:8888 ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE}:${env.BUILD_ID}
+                 """
         }
     }
 }
