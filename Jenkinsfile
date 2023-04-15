@@ -59,7 +59,7 @@ pipeline {
         stage ('Deploy') {
             steps {
                 sh """
-                    docker run -p 8443:8888 ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}:latest
+                    docker run -d -p 8443:8888 ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}:latest
                 """
             }
         }
