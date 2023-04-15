@@ -9,11 +9,6 @@ pipeline {
         jdk 'JDK17'
     }
 
-
-    parameters {
-        choices(name: 'BRANCH', choices: ['test', 'master'], description: 'the branch to build')
-    }
-
     stages {
         stage('Git Clone') {
             steps {
