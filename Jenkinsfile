@@ -64,7 +64,6 @@ pipeline {
                 }
                 sh """
                      echo ${CONTAINER_ID}
-                     docker stop ${CONTAINER_ID}
 
                  """
             }
