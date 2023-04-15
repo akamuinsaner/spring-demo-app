@@ -56,9 +56,8 @@ pipeline {
         }
 
         stage ('Deploy') {
-
+            CONTAINER_ID = sh script: "docker ps -a | grep -0e ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE} | cut -c1-10", returnStdout: true
             steps {
-                CONTAINER_ID = sh script: "docker ps -a | grep -0e ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE} | cut -c1-10", returnStdout: true
                 sh """
                      echo ${CONTAINER_ID}
                      docker stop ${CONTAINER_ID}
