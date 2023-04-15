@@ -58,10 +58,13 @@ pipeline {
 
         stage ('Deploy') {
             steps {
-                sh """
-                   docker pull ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}:latest
-                   docker run -p 8443:8888 ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}:latest
-                """
+                withCredentials([string(credentialsId: 'hub.docker', passwordVariable: 'password', usernameVariable: 'username')]) {
+                    sh """
+                       docker login --username ${username} --password ${password}
+                       docker pull ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}:latest
+                       docker run -p 8443:8888 ${env.PROJECT_NAME}/${env.PREFIX}-${env.PROFILE}:latest
+                    """
+                }
             }
         }
     }
