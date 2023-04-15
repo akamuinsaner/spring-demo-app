@@ -1,9 +1,5 @@
 node {
 
-    tools {
-        maven 'Maven'
-        jdk 'JDK17'
-    }
 
     environment {
         PROFILE = "${params.BRANCH == "master" ? "prod" : "test"}"
