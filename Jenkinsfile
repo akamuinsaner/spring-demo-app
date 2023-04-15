@@ -11,6 +11,9 @@ node {
     }
 
     stage('Test') {
+        env.JAVA_HOME="${tool 'JDK17'}"
+        env.MAVEN_HOME="${tool 'MAVEN'}"
+        env.PATH="${env.JAVA_HOME}/bin:${env.MAVEN_HOME}/bin:${env.PATH}"
         sh """
                     mvn test
                 """
