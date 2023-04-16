@@ -60,6 +60,7 @@ pipeline {
                 script {
                     def CONTAINER_ID = sh(script: "docker ps -a | grep -0e ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE} | cut -c1-10", returnStdout: true).trim();
                     sh """
+                        docker stop ${CONTAINER_ID}
                         docker run -d -p 8443:8888 ${env.PROJECT_NAME}/${env.JOB_NAME}-${env.PROFILE}:${env.BUILD_ID}
                     """
                 }
