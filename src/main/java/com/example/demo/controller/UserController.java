@@ -26,9 +26,10 @@ public class UserController {
     PasswordEncoder passwordEncoder;
 
     @PostMapping("/register")
-    public Long processUser(@RequestBody User user) {
+    public User processUser(@RequestBody User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        return userService.save(user);
+        userService.save(user);
+        return user;
     }
 
     @GetMapping("/user/detailById")
