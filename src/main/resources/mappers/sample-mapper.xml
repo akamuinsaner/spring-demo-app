@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.mapper.SampleMapper">
+    <resultMap id="SampleMap" type="com.example.demo.model.sample.Sample">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="name_id" jdbcType="INTEGER" property="nameId" />
+        <result column="price_id" jdbcType="INTEGER" property="priceId" />
+        <result column="service_id" jdbcType="INTEGER" property="serviceId" />
+        <result column="other_id" jdbcType="INTEGER" property="otherId" />
+        <result column="status" jdbcType="INTEGER" property="status" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
+        <result column="label_id" jdbcType="INTEGER" property="labelId" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="cover_imgs" jdbcType="VARCHAR" property="coverImgs" />
+        <result column="detail_imgs" jdbcType="VARCHAR" property="detailImgs" />
+        <result column="price" jdbcType="INTEGER" property="price" />
+        <result column="earnest" jdbcType="INTEGER" property="earnest" />
+        <result column="model_count" jdbcType="INTEGER" property="modelCount" />
+        <result column="film_count" jdbcType="INTEGER" property="filmCount" />
+        <result column="film_all_send" jdbcType="INTEGER" property="filmAllSend" />
+        <result column="shoot_duration" jdbcType="INTEGER" property="shootDuration" />
+        <result column="finishing_quantity" jdbcType="INTEGER" property="finishingQuantity" />
+        <result column="shoot_scene_indoor_count" jdbcType="INTEGER" property="shootSceneIndoorCount" />
+        <result column="shoot_scene_outdoor_count" jdbcType="INTEGER" property="shootSceneOutdoorCount" />
+        <result column="custom_service_detail" jdbcType="INTEGER" property="customServiceDetail" />
+        <result column="is_public" jdbcType="BOOLEAN" property="isPublic" />
+        <result column="tip" jdbcType="VARCHAR" property="tip" />
+        <collection property="labelList" ofType="com.example.demo.model.sample.SampleLabel">
+            <id column="l_id" jdbcType="INTEGER" property="id" />
+            <result column="l_name" jdbcType="VARCHAR" property="name"></result>
+            <result column="l_parent_id" jdbcType="VARCHAR" property="parentId"></result>
+        </collection>
+        <collection column="l_id" property="labelIds" ofType="long">
+            <result column="l_id" />
+        </collection>
+    </resultMap>
+
+    <select id="findSampleById" parameterType="Long" resultMap="SampleMap">
+        select s.id,s.status,s.name_id, s.price_id, s.service_id, s.other_id ,sn.name as name,
+        sn.label_id as label_id, sn.description as description, sn.cover_imgs as cover_imgs,
+        sn.detail_imgs as detail_imgs, sp.price, sp.earnest, ss.model_count, ss.film_count,
+        ss.film_all_send, ss.shoot_duration, ss.finishing_quantity, ss.shoot_scene_indoor_count,
+        ss.shoot_scene_outdoor_count, ss.custom_service_detail, so.is_public, so.tip, sl.id as l_id,
+        sl.name as l_name, sl.parent_id as l_parent_id from sample s left join sample_name sn on
+        s.name_id = sn.id left join sample_price sp on s.price_id = sp.id left join sample_service ss
+        on s.service_id = ss.id left join sample_other so on s.other_id = so.id
+        left join sys_sample_label sssl on sn.id = sssl.parent_id left join sample_label sl on sssl.label_id = sl.id
+        where s.id = #{id, jdbcType=INTEGER}
+    </select>
+
+    <select id="findUnFinishedSample" parameterType="Long" resultMap="SampleMap">
+        select s.id,s.status,s.name_id, s.price_id, s.service_id, s.other_id ,sn.name as name,
+        sn.label_id as label_id, sn.description as description, sn.cover_imgs as cover_imgs,
+        sn.detail_imgs as detail_imgs, sp.price, sp.earnest, ss.model_count, ss.film_count,
+        ss.film_all_send, ss.shoot_duration, ss.finishing_quantity, ss.shoot_scene_indoor_count,
+        ss.shoot_scene_outdoor_count, ss.custom_service_detail, so.is_public, so.tip, sl.id as l_id,
+        sl.name as l_name, sl.parent_id as l_parent_id from sample s left join sample_name sn on
+        s.name_id = sn.id left join sample_price sp on s.price_id = sp.id left join sample_service ss
+        on s.service_id = ss.id left join sample_other so on s.other_id = so.id
+        left join sys_sample_label sssl on sn.id = sssl.parent_id left join sample_label sl on sssl.label_id = sl.id
+        where s.status = 0
+    </select>
+
+    <insert id="insertSample" parameterType="com.example.demo.model.sample.Sample" useGeneratedKeys="true" keyProperty="id">
+        insert into sample (`name_id`, `price_id`, `service_id`, `other_id`, `user_id`, `status`)
+        values (#{nameId, jdbcType=INTEGER},#{priceId, jdbcType=INTEGER},#{serviceId, jdbcType=INTEGER},#{otherId, jdbcType=INTEGER},#{userId, jdbcType=INTEGER},#{status, jdbcType=INTEGER});
+    </insert>
+
+    <insert id="updateSample" parameterType="com.example.demo.model.sample.Sample" useGeneratedKeys="true" keyProperty="id">
+        update sample
+            <set>
+                <if test='nameId != null'>`name_id` = #{nameId, jdbcType=INTEGER},</if>
+                <if test='priceId != null'>`price_id` = #{priceId, jdbcType=INTEGER},</if>
+                <if test='serviceId != null'>`service_id` = #{serviceId, jdbcType=INTEGER},</if>
+                <if test='otherId != null'>`other_id` = #{otherId, jdbcType=INTEGER},</if>
+                <if test='status != null'>`status` = #{status, jdbcType=INTEGER},</if>
+            </set>
+    </insert>
+
+    <insert id="insertSampleName" parameterType="com.example.demo.model.sample.SampleName" useGeneratedKeys="true" keyProperty="id">
+        insert into sample_name (`name`, `label_id`, `description`, `cover_imgs`, `detail_imgs`) values (#{name, jdbcType=VARCHAR},#{labelId, jdbcType=INTEGER},#{description, jdbcType=VARCHAR},#{coverImgs, jdbcType=VARCHAR},#{detailImgs, jdbcType=VARCHAR});
+    </insert>
+
+    <insert id="updateSampleName" parameterType="com.example.demo.model.sample.SampleName" useGeneratedKeys="true" keyProperty="id">
+        update sample_name set `name` = #{name, jdbcType=VARCHAR},`label_id` = #{labelId, jdbcType=INTEGER}, `description` = #{description, jdbcType=VARCHAR},`cover_imgs` = #{coverImgs, jdbcType=VARCHAR},`detail_imgs` = #{detailImgs, jdbcType=VARCHAR} where id = #{id, jdbcType=INTEGER}
+    </insert>
+
+    <insert id="insertSampleLabels" parameterType="java.util.Objects">
+        insert into sys_sample_label (`parent_id`, `label_id`) values
+        <foreach collection="labelIds" item="labelId" separator=",">
+            (#{nameId, jdbcType=INTEGER}, #{labelId, jdbcType=INTEGER})
+        </foreach>
+    </insert>
+
+    <insert id="deleteSampleLabels" parameterType="Long">
+        delete from sys_sample_label where parent_id = #{nameId, jdbcType=INTEGER}
+    </insert>
+
+    <insert id="insertSamplePrice" parameterType="com.example.demo.model.sample.SamplePrice" useGeneratedKeys="true" keyProperty="id">
+        insert into sample_price (`price`, `earnest`) values (#{price, jdbcType=INTEGER},#{earnest, jdbcType=INTEGER});
+    </insert>
+
+    <insert id="updateSamplePrice" parameterType="com.example.demo.model.sample.SamplePrice" useGeneratedKeys="true" keyProperty="id">
+        update sample_price set `price` = #{price, jdbcType=INTEGER},`earnest` = #{earnest, jdbcType=INTEGER}
+    </insert>
+
+    <insert id="insertSampleService" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
+        insert into sample_service (`model_count`, `film_count`, `film_all_send`, `shoot_duration`, `finishing_quantity`, `shoot_scene_indoor_count`, `shoot_scene_outdoor_count`, `custom_service_detail`)
+        values (#{modelCount, jdbcType=VARCHAR},#{filmCount, jdbcType=VARCHAR},#{filmAllSend, jdbcType=BOOLEAN},#{shootDuration, jdbcType=VARCHAR},#{finishingQuantity, jdbcType=VARCHAR},#{shootSceneIndoorCount, jdbcType=INTEGER},#{shootSceneOutdoorCount, jdbcType=INTEGER},#{customServiceDetail, jdbcType=VARCHAR});
+    </insert>
+
+    <insert id="updateSampleService" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
+        update sample_service set
+            `model_count` = #{modelCount, jdbcType=VARCHAR},
+            `film_count` = #{filmCount, jdbcType=VARCHAR},
+            `film_all_send` = #{filmAllSend, jdbcType=BOOLEAN},
+            `shoot_duration` = #{shootDuration, jdbcType=VARCHAR},
+            `finishing_quantity` = #{finishingQuantity, jdbcType=VARCHAR},
+            `shoot_scene_indoor_count` = #{shootSceneIndoorCount, jdbcType=INTEGER},
+            `shoot_scene_outdoor_count` = #{shootSceneOutdoorCount, jdbcType=INTEGER},
+            `custom_service_detail` = #{customServiceDetail, jdbcType=VARCHAR}
+    </insert>
+
+    <insert id="insertSampleOther" parameterType="com.example.demo.model.sample.SampleOther" useGeneratedKeys="true" keyProperty="id">
+        insert into sample_other (`is_public`, `tip`) values (#{isPublic, jdbcType=BOOLEAN},#{tip, jdbcType=VARCHAR});
+    </insert>
+
+    <insert id="updateSampleOther" parameterType="com.example.demo.model.sample.SampleOther" useGeneratedKeys="true" keyProperty="id">
+        update sample_other set `is_public` = #{isPublic, jdbcType=BOOLEAN},`tip` = #{tip, jdbcType=VARCHAR}
+    </insert>
+</mapper>
