@@ -2,10 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.model.sample.*;
 import com.example.demo.service.SampleLabelService;
+import com.example.demo.service.SampleService;
 import com.example.demo.service.SampleServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,5 +53,25 @@ public class SampleController {
     @GetMapping("/sampleLabels")
     public List<SampleLabel> findSampleLabels() {
         return sampleLabelService.findSampleLabels();
+    }
+
+    @GetMapping("/template/findByUserId")
+    public List<SampleServiceModel> findSampleServiceTemplateByUserId(@RequestParam("userId") Long userId) {
+        return sampleService.findSampleServiceTemplateByUserId(userId);
+    }
+
+    @PostMapping("/template/insert")
+    public Long insertSampleServiceTemplate(@RequestBody SampleServiceModel sampleServiceModel) {
+        return sampleService.insertSampleServiceTemplate(sampleServiceModel);
+    }
+
+    @PostMapping("/template/update")
+    public Long updateSampleServiceTemplate(@RequestBody SampleServiceModel sampleServiceModel) {
+        return sampleService.updateSampleServiceTemplate(sampleServiceModel);
+    }
+
+    @PostMapping("/template/deleteById")
+    public void deleteSampleServiceTemplateById(@RequestBody Map<String, Long> map) {
+        sampleService.deleteSampleServiceTemplateById(map.get("templateId"));
     }
 }

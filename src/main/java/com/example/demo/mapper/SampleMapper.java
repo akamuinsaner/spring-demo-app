@@ -35,4 +35,12 @@ public interface SampleMapper {
     void insertSampleLabels(Long nameId, List<Long> labelIds);
 
     void deleteSampleLabels(Long nameId);
+
+    Long insertSampleServiceTemplate(SampleServiceModel sampleServiceModel);
+
+    Long updateSampleServiceTemplate(SampleServiceModel sampleServiceModel);
+
+    List<SampleServiceModel> findSampleServiceTemplateByUserId(Long userId);
+
+    void deleteSampleServiceTemplate(Long templateId);
 }

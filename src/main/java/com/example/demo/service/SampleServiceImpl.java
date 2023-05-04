@@ -158,4 +158,26 @@ public class SampleServiceImpl implements SampleService {
             return sample;
         }
     }
+
+    @Override
+    public Long insertSampleServiceTemplate(SampleServiceModel sampleServiceModel) {
+        sampleMapper.insertSampleServiceTemplate(sampleServiceModel);
+        return sampleServiceModel.getId();
+    }
+
+    @Override
+    public Long updateSampleServiceTemplate(SampleServiceModel sampleServiceModel) {
+        sampleMapper.updateSampleServiceTemplate(sampleServiceModel);
+        return sampleServiceModel.getId();
+    }
+
+    @Override
+    public List<SampleServiceModel> findSampleServiceTemplateByUserId(Long userId) {
+        return sampleMapper.findSampleServiceTemplateByUserId(userId);
+    }
+
+    @Override
+    public void deleteSampleServiceTemplateById(Long templateId) {
+        sampleMapper.deleteSampleServiceTemplate(templateId);
+    }
 }

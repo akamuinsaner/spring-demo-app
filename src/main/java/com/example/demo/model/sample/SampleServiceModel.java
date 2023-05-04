@@ -15,8 +15,14 @@ public class SampleServiceModel {
     @Transient
     private Long sampleId;
 
+    @Column(name = "provide_models")
+    private Boolean provideModels = false;
+
     @Column(name = "model_count")
     private String modelCount;
+
+    @Column(name = "model_count_custom")
+    private String modelCountCustom;
 
     @Column(name = "film_count", nullable = false)
     private String filmCount;
@@ -26,6 +32,9 @@ public class SampleServiceModel {
 
     @Column(name = "shoot_duration", nullable = false)
     private String shootDuration;
+
+    @Column(name = "shoot_duration_custom", nullable = false)
+    private String shootDurationCustom;
 
     @Column(name = "finishing_quantity", nullable = false)
     private String finishingQuantity;

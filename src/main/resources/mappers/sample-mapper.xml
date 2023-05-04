@@ -18,11 +18,14 @@
         <result column="detail_imgs" jdbcType="VARCHAR" property="detailImgs" />
         <result column="price" jdbcType="INTEGER" property="price" />
         <result column="earnest" jdbcType="INTEGER" property="earnest" />
-        <result column="model_count" jdbcType="INTEGER" property="modelCount" />
-        <result column="film_count" jdbcType="INTEGER" property="filmCount" />
-        <result column="film_all_send" jdbcType="INTEGER" property="filmAllSend" />
-        <result column="shoot_duration" jdbcType="INTEGER" property="shootDuration" />
-        <result column="finishing_quantity" jdbcType="INTEGER" property="finishingQuantity" />
+        <result column="provide_models" jdbcType="BOOLEAN" property="provideModels" />
+        <result column="model_count" jdbcType="VARCHAR" property="modelCount" />
+        <result column="model_count_custom" jdbcType="VARCHAR" property="modelCountCustom" />
+        <result column="film_count" jdbcType="VARCHAR" property="filmCount" />
+        <result column="film_all_send" jdbcType="VARCHAR" property="filmAllSend" />
+        <result column="shoot_duration" jdbcType="VARCHAR" property="shootDuration" />
+        <result column="shoot_duration_custom" jdbcType="VARCHAR" property="shootDurationCustom" />
+        <result column="finishing_quantity" jdbcType="VARCHAR" property="finishingQuantity" />
         <result column="shoot_scene_indoor_count" jdbcType="INTEGER" property="shootSceneIndoorCount" />
         <result column="shoot_scene_outdoor_count" jdbcType="INTEGER" property="shootSceneOutdoorCount" />
         <result column="custom_service_detail" jdbcType="INTEGER" property="customServiceDetail" />
@@ -41,9 +44,9 @@
     <select id="findSampleById" parameterType="Long" resultMap="SampleMap">
         select s.id,s.status,s.name_id, s.price_id, s.service_id, s.other_id ,sn.name as name,
         sn.label_id as label_id, sn.description as description, sn.cover_imgs as cover_imgs,
-        sn.detail_imgs as detail_imgs, sp.price, sp.earnest, ss.model_count, ss.film_count,
-        ss.film_all_send, ss.shoot_duration, ss.finishing_quantity, ss.shoot_scene_indoor_count,
-        ss.shoot_scene_outdoor_count, ss.custom_service_detail, so.is_public, so.tip, sl.id as l_id,
+        sn.detail_imgs as detail_imgs, sp.price, sp.earnest,ss.provide_models, ss.model_count, ss.model_count_custom,
+        ss.film_count, ss.film_all_send, ss.shoot_duration, ss.shoot_duration_custom, ss.finishing_quantity,
+        ss.shoot_scene_indoor_count, ss.shoot_scene_outdoor_count, ss.custom_service_detail, so.is_public, so.tip, sl.id as l_id,
         sl.name as l_name, sl.parent_id as l_parent_id from sample s left join sample_name sn on
         s.name_id = sn.id left join sample_price sp on s.price_id = sp.id left join sample_service ss
         on s.service_id = ss.id left join sample_other so on s.other_id = so.id
@@ -54,9 +57,9 @@
     <select id="findUnFinishedSample" parameterType="Long" resultMap="SampleMap">
         select s.id,s.status,s.name_id, s.price_id, s.service_id, s.other_id ,sn.name as name,
         sn.label_id as label_id, sn.description as description, sn.cover_imgs as cover_imgs,
-        sn.detail_imgs as detail_imgs, sp.price, sp.earnest, ss.model_count, ss.film_count,
-        ss.film_all_send, ss.shoot_duration, ss.finishing_quantity, ss.shoot_scene_indoor_count,
-        ss.shoot_scene_outdoor_count, ss.custom_service_detail, so.is_public, so.tip, sl.id as l_id,
+        sn.detail_imgs as detail_imgs, sp.price, sp.earnest,ss.provide_models, ss.model_count, ss.model_count_custom,
+        ss.film_count, ss.film_all_send, ss.shoot_duration, ss.shoot_duration_custom, ss.finishing_quantity,
+        ss.shoot_scene_indoor_count, ss.shoot_scene_outdoor_count, ss.custom_service_detail, so.is_public, so.tip, sl.id as l_id,
         sl.name as l_name, sl.parent_id as l_parent_id from sample s left join sample_name sn on
         s.name_id = sn.id left join sample_price sp on s.price_id = sp.id left join sample_service ss
         on s.service_id = ss.id left join sample_other so on s.other_id = so.id
@@ -108,16 +111,24 @@
     </insert>
 
     <insert id="insertSampleService" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
-        insert into sample_service (`model_count`, `film_count`, `film_all_send`, `shoot_duration`, `finishing_quantity`, `shoot_scene_indoor_count`, `shoot_scene_outdoor_count`, `custom_service_detail`)
-        values (#{modelCount, jdbcType=VARCHAR},#{filmCount, jdbcType=VARCHAR},#{filmAllSend, jdbcType=BOOLEAN},#{shootDuration, jdbcType=VARCHAR},#{finishingQuantity, jdbcType=VARCHAR},#{shootSceneIndoorCount, jdbcType=INTEGER},#{shootSceneOutdoorCount, jdbcType=INTEGER},#{customServiceDetail, jdbcType=VARCHAR});
+        insert into sample_service (`provide_models`, `model_count`, `model_count_custom`, `film_count`,
+        `film_all_send`, `shoot_duration`, `shoot_duration_custom`, `finishing_quantity`, `shoot_scene_indoor_count`,
+        `shoot_scene_outdoor_count`, `custom_service_detail`) values (#{provideModels, jdbcType=BOOLEAN},
+        #{modelCount, jdbcType=VARCHAR},#{modelCountCustom, jdbcType=VARCHAR},#{filmCount, jdbcType=VARCHAR},
+        #{filmAllSend, jdbcType=BOOLEAN},#{shootDuration, jdbcType=VARCHAR},#{shootDurationCustom, jdbcType=VARCHAR},
+        #{finishingQuantity, jdbcType=VARCHAR},#{shootSceneIndoorCount, jdbcType=INTEGER},
+        #{shootSceneOutdoorCount, jdbcType=INTEGER},#{customServiceDetail, jdbcType=VARCHAR});
     </insert>
 
     <insert id="updateSampleService" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
         update sample_service set
+            `provide_models` = #{provideModels, jdbcType=BOOLEAN},
             `model_count` = #{modelCount, jdbcType=VARCHAR},
+            `model_count_custom` = #{modelCountCustom, jdbcType=VARCHAR},
             `film_count` = #{filmCount, jdbcType=VARCHAR},
             `film_all_send` = #{filmAllSend, jdbcType=BOOLEAN},
             `shoot_duration` = #{shootDuration, jdbcType=VARCHAR},
+            `shoot_duration_custom` = #{shootDurationCustom, jdbcType=VARCHAR},
             `finishing_quantity` = #{finishingQuantity, jdbcType=VARCHAR},
             `shoot_scene_indoor_count` = #{shootSceneIndoorCount, jdbcType=INTEGER},
             `shoot_scene_outdoor_count` = #{shootSceneOutdoorCount, jdbcType=INTEGER},
@@ -131,4 +142,37 @@
     <insert id="updateSampleOther" parameterType="com.example.demo.model.sample.SampleOther" useGeneratedKeys="true" keyProperty="id">
         update sample_other set `is_public` = #{isPublic, jdbcType=BOOLEAN},`tip` = #{tip, jdbcType=VARCHAR}
     </insert>
+
+    <insert id="insertSampleServiceTemplate" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
+        insert into sample_service_template (`user_id`, `provide_models`, `model_count`, `model_count_custom`, `film_count`,
+        `film_all_send`, `shoot_duration`, `shoot_duration_custom`, `finishing_quantity`, `shoot_scene_indoor_count`,
+        `shoot_scene_outdoor_count`) values (#{userId, jdbcType=INTEGER}, #{provideModels, jdbcType=BOOLEAN},
+        #{modelCount, jdbcType=VARCHAR},#{modelCountCustom, jdbcType=VARCHAR},#{filmCount, jdbcType=VARCHAR},
+        #{filmAllSend, jdbcType=BOOLEAN},#{shootDuration, jdbcType=VARCHAR},#{shootDurationCustom, jdbcType=VARCHAR},
+        #{finishingQuantity, jdbcType=VARCHAR},#{shootSceneIndoorCount, jdbcType=INTEGER},
+        #{shootSceneOutdoorCount, jdbcType=INTEGER},#{customServiceDetail, jdbcType=VARCHAR});
+    </insert>
+
+    <insert id="updateSampleServiceTemplate" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
+        update sample_service set
+        `user_id` = #{userId, jdbcType=INTEGER},
+        `provide_models` = #{provideModels, jdbcType=BOOLEAN},
+        `model_count` = #{modelCount, jdbcType=VARCHAR},
+        `model_count_custom` = #{modelCountCustom, jdbcType=VARCHAR},
+        `film_count` = #{filmCount, jdbcType=VARCHAR},
+        `film_all_send` = #{filmAllSend, jdbcType=BOOLEAN},
+        `shoot_duration` = #{shootDuration, jdbcType=VARCHAR},
+        `shoot_duration_custom` = #{shootDurationCustom, jdbcType=VARCHAR},
+        `finishing_quantity` = #{finishingQuantity, jdbcType=VARCHAR},
+        `shoot_scene_indoor_count` = #{shootSceneIndoorCount, jdbcType=INTEGER},
+        `shoot_scene_outdoor_count` = #{shootSceneOutdoorCount, jdbcType=INTEGER}
+    </insert>
+
+    <select id="findSampleServiceTemplateByUserId" parameterType="Long" resultMap="SampleMap">
+        select * from sample_service_template where user_id = #{userId, jdbcType=INTEGER}
+    </select>
+
+    <delete id="deleteSampleServiceTemplate" parameterType="Long">
+        delete from sample_service_template where id = #{templateId, jdbcType=INTEGER}
+    </delete>
 </mapper>
