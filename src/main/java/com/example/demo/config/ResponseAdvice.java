@@ -30,10 +30,10 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
         return ResultData.success(body);
     }
 
-//    @ExceptionHandler
-//    @ResponseBody
-//    public Object expHandler(Exception e) {
-//        return ResultData.fail(e.getMessage());
-//    }
+    @ExceptionHandler
+    @ResponseBody
+    public Object expHandler(Exception e) {
+        return ResultData.fail(e.getMessage());
+    }
 
 }

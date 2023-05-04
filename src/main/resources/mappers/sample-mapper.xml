@@ -41,6 +41,21 @@
         </collection>
     </resultMap>
 
+    <resultMap id="SampleServiceMap" type="com.example.demo.model.sample.SampleServiceModel">
+        <id column="id" jdbcType="INTEGER" property="id" />
+        <result column="user_id" jdbcType="INTEGER" property="userId" />
+        <result column="provide_models" jdbcType="BOOLEAN" property="provideModels" />
+        <result column="model_count" jdbcType="VARCHAR" property="modelCount" />
+        <result column="model_count_custom" jdbcType="VARCHAR" property="modelCountCustom" />
+        <result column="film_count" jdbcType="VARCHAR" property="filmCount" />
+        <result column="film_all_send" jdbcType="VARCHAR" property="filmAllSend" />
+        <result column="shoot_duration" jdbcType="VARCHAR" property="shootDuration" />
+        <result column="shoot_duration_custom" jdbcType="VARCHAR" property="shootDurationCustom" />
+        <result column="finishing_quantity" jdbcType="VARCHAR" property="finishingQuantity" />
+        <result column="shoot_scene_indoor_count" jdbcType="INTEGER" property="shootSceneIndoorCount" />
+        <result column="shoot_scene_outdoor_count" jdbcType="INTEGER" property="shootSceneOutdoorCount" />
+    </resultMap>
+
     <select id="findSampleById" parameterType="Long" resultMap="SampleMap">
         select s.id,s.status,s.name_id, s.price_id, s.service_id, s.other_id ,sn.name as name,
         sn.label_id as label_id, sn.description as description, sn.cover_imgs as cover_imgs,
@@ -144,17 +159,17 @@
     </insert>
 
     <insert id="insertSampleServiceTemplate" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
-        insert into sample_service_template (`user_id`, `provide_models`, `model_count`, `model_count_custom`, `film_count`,
-        `film_all_send`, `shoot_duration`, `shoot_duration_custom`, `finishing_quantity`, `shoot_scene_indoor_count`,
-        `shoot_scene_outdoor_count`) values (#{userId, jdbcType=INTEGER}, #{provideModels, jdbcType=BOOLEAN},
+        insert into sample_service_template (`user_id`,`provide_models`,`model_count`,`model_count_custom`,
+        `film_count`,`film_all_send`,`shoot_duration`,`shoot_duration_custom`,`finishing_quantity`,`shoot_scene_indoor_count`,`shoot_scene_outdoor_count`)
+        values (#{userId, jdbcType=INTEGER}, #{provideModels, jdbcType=BOOLEAN},
         #{modelCount, jdbcType=VARCHAR},#{modelCountCustom, jdbcType=VARCHAR},#{filmCount, jdbcType=VARCHAR},
         #{filmAllSend, jdbcType=BOOLEAN},#{shootDuration, jdbcType=VARCHAR},#{shootDurationCustom, jdbcType=VARCHAR},
         #{finishingQuantity, jdbcType=VARCHAR},#{shootSceneIndoorCount, jdbcType=INTEGER},
-        #{shootSceneOutdoorCount, jdbcType=INTEGER},#{customServiceDetail, jdbcType=VARCHAR});
+        #{shootSceneOutdoorCount, jdbcType=INTEGER});
     </insert>
 
     <insert id="updateSampleServiceTemplate" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
-        update sample_service set
+        update sample_service_template set
         `user_id` = #{userId, jdbcType=INTEGER},
         `provide_models` = #{provideModels, jdbcType=BOOLEAN},
         `model_count` = #{modelCount, jdbcType=VARCHAR},
@@ -166,9 +181,10 @@
         `finishing_quantity` = #{finishingQuantity, jdbcType=VARCHAR},
         `shoot_scene_indoor_count` = #{shootSceneIndoorCount, jdbcType=INTEGER},
         `shoot_scene_outdoor_count` = #{shootSceneOutdoorCount, jdbcType=INTEGER}
+        where id = #{id, jdbcType=INTEGER}
     </insert>
 
-    <select id="findSampleServiceTemplateByUserId" parameterType="Long" resultMap="SampleMap">
+    <select id="findSampleServiceTemplateByUserId" parameterType="Long" resultMap="SampleServiceMap">
         select * from sample_service_template where user_id = #{userId, jdbcType=INTEGER}
     </select>
 
