@@ -15,6 +15,9 @@ public class SampleServiceModel {
     @Transient
     private Long sampleId;
 
+    @Transient
+    private String name;
+
     @Column(name = "provide_models")
     private Boolean provideModels = false;
 

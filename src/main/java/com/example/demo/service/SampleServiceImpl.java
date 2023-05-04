@@ -44,12 +44,6 @@ public class SampleServiceImpl implements SampleService {
                 sampleMapper.insertSampleName(sampleName);
                 sampleMapper.insertSampleLabels(sampleName.getId(), sampleName.getLabelIds());
                 sample.setNameId(sampleName.getId());
-                if (sample.getServiceId() != null
-                        && sample.getPriceId() != null
-                        && sample.getNameId() != null
-                        && sample.getOtherId() != null) {
-                    sample.setStatus(CommonEnums.SampleStatus.未发布.getValue());
-                }
                 sampleMapper.updateSample(sample);
                 return sampleMapper.findSampleById(sample.getId());
             }
@@ -79,12 +73,6 @@ public class SampleServiceImpl implements SampleService {
                 Sample sample = sampleMapper.findSampleById(samplePrice.getSampleId());
                 sampleMapper.insertSamplePrice(samplePrice);
                 sample.setPriceId(samplePrice.getId());
-                if (sample.getServiceId() != null
-                        && sample.getPriceId() != null
-                        && sample.getNameId() != null
-                        && sample.getOtherId() != null) {
-                    sample.setStatus(CommonEnums.SampleStatus.未发布.getValue());
-                }
                 sampleMapper.updateSample(sample);
                 return sampleMapper.findSampleById(sample.getId());
             }
@@ -111,12 +99,6 @@ public class SampleServiceImpl implements SampleService {
                 Sample sample = sampleMapper.findSampleById(sampleServiceModel.getSampleId());
                 sampleMapper.insertSampleService(sampleServiceModel);
                 sample.setServiceId(sampleServiceModel.getId());
-                if (sample.getServiceId() != null
-                        && sample.getPriceId() != null
-                        && sample.getNameId() != null
-                        && sample.getOtherId() != null) {
-                    sample.setStatus(CommonEnums.SampleStatus.未发布.getValue());
-                }
                 sampleMapper.updateSample(sample);
                 return sampleMapper.findSampleById(sample.getId());
             }
@@ -143,12 +125,6 @@ public class SampleServiceImpl implements SampleService {
                 Sample sample = sampleMapper.findSampleById(sampleOther.getSampleId());
                 sampleMapper.insertSampleOther(sampleOther);
                 sample.setOtherId(sampleOther.getId());
-                if (sample.getServiceId() != null
-                        && sample.getPriceId() != null
-                        && sample.getNameId() != null
-                        && sample.getOtherId() != null) {
-                    sample.setStatus(CommonEnums.SampleStatus.未发布.getValue());
-                }
                 sampleMapper.updateSample(sample);
                 return sampleMapper.findSampleById(sample.getId());
             }

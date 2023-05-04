@@ -159,9 +159,9 @@
     </insert>
 
     <insert id="insertSampleServiceTemplate" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
-        insert into sample_service_template (`user_id`,`provide_models`,`model_count`,`model_count_custom`,
+        insert into sample_service_template (`name`, `user_id`,`provide_models`,`model_count`,`model_count_custom`,
         `film_count`,`film_all_send`,`shoot_duration`,`shoot_duration_custom`,`finishing_quantity`,`shoot_scene_indoor_count`,`shoot_scene_outdoor_count`)
-        values (#{userId, jdbcType=INTEGER}, #{provideModels, jdbcType=BOOLEAN},
+        values (#{name, jdbcType=VARCHAR},#{userId, jdbcType=INTEGER}, #{provideModels, jdbcType=BOOLEAN},
         #{modelCount, jdbcType=VARCHAR},#{modelCountCustom, jdbcType=VARCHAR},#{filmCount, jdbcType=VARCHAR},
         #{filmAllSend, jdbcType=BOOLEAN},#{shootDuration, jdbcType=VARCHAR},#{shootDurationCustom, jdbcType=VARCHAR},
         #{finishingQuantity, jdbcType=VARCHAR},#{shootSceneIndoorCount, jdbcType=INTEGER},
@@ -170,6 +170,7 @@
 
     <insert id="updateSampleServiceTemplate" parameterType="com.example.demo.model.sample.SampleServiceModel" useGeneratedKeys="true" keyProperty="id">
         update sample_service_template set
+        `name` = #{name, jdbcType=VARCHAR},
         `user_id` = #{userId, jdbcType=INTEGER},
         `provide_models` = #{provideModels, jdbcType=BOOLEAN},
         `model_count` = #{modelCount, jdbcType=VARCHAR},

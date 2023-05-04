@@ -50,7 +50,13 @@ public class Sample {
     private Integer earnest;
 
     @Transient
+    private Boolean provideModels;
+
+    @Transient
     private String modelCount;
+
+    @Transient
+    private String modelCountCustom;
 
     @Transient
     private String filmCount;
@@ -60,6 +66,9 @@ public class Sample {
 
     @Transient
     private String shootDuration;
+
+    @Transient
+    private String shootDurationCustom;
 
     @Transient
     private String finishingQuantity;

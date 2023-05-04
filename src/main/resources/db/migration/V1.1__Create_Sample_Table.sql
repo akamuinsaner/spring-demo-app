@@ -44,6 +44,7 @@ create table if not exists `sample_service` (
 
 create table if not exists `sample_service_template` (
     `id` int unsigned auto_increment,
+    `name` varchar(10) not null,
     `user_id` int,
     `provide_models` boolean default false,
     `model_count` varchar(30),
