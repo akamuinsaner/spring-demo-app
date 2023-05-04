@@ -1,4 +1,5 @@
 package com.example.demo.service;
+import com.example.demo.constant.MessageCode;
 import com.example.demo.mapper.SampleMapper;
 import com.example.demo.model.sample.*;
 import jakarta.transaction.Transactional;
@@ -179,5 +180,19 @@ public class SampleServiceImpl implements SampleService {
     @Override
     public void deleteSampleServiceTemplateById(Long templateId) {
         sampleMapper.deleteSampleServiceTemplate(templateId);
+    }
+
+    @Override
+    public void finishSampleInfo(Long sampleId) throws Exception {
+        Sample sample = sampleMapper.findSampleById(sampleId);
+        if (sample.getNameId() == null
+                || sample.getPriceId() == null
+                || sample.getServiceId() == null
+                || sample.getOtherId() == null) {
+            throw new Exception(MessageCode.UNFINISHEDSAMPLE_10001.getMessage());
+        }
+        if (sample.getStatus() != CommonEnums.SampleStatus.未发布.getValue()) {
+
+        }
     }
 }

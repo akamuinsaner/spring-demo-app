@@ -27,4 +27,6 @@ public interface SampleService {
     public List<SampleServiceModel> findSampleServiceTemplateByUserId(Long userId);
 
     public void deleteSampleServiceTemplateById(Long templateId);
+
+    public void finishSampleInfo(Long sampleId) throws Exception;
 }

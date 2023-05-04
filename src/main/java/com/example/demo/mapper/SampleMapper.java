@@ -43,4 +43,6 @@ public interface SampleMapper {
     List<SampleServiceModel> findSampleServiceTemplateByUserId(Long userId);
 
     void deleteSampleServiceTemplate(Long templateId);
+
+    void finishSampleInfo(Long sampleId);
 }
