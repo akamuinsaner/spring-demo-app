@@ -87,7 +87,7 @@
     </select>
 
     <insert id="insertSample" parameterType="com.example.demo.model.sample.Sample" useGeneratedKeys="true" keyProperty="id">
-        insert into sample (`name_id`, `price_id`, `service_id`, `other_id`, `user_id`, `status`)
+        insert into sample (`name_id`,`price_id`,`service_id`,`other_id`,`user_id`,`status`)
         values (#{nameId, jdbcType=INTEGER},#{priceId, jdbcType=INTEGER},#{serviceId, jdbcType=INTEGER},#{otherId, jdbcType=INTEGER},#{userId, jdbcType=INTEGER},#{status, jdbcType=INTEGER});
     </insert>
 
