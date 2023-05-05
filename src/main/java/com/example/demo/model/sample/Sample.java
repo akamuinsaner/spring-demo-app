@@ -1,14 +1,16 @@
 package com.example.demo.model.sample;
 import com.example.demo.constant.CommonEnums;
+import com.example.demo.model.Auditable;
 import jakarta.persistence.*;
 import lombok.Data;
+
 
 import java.util.List;
 
 @Entity
 @Table(name = "sample")
 @Data
-public class Sample {
+public class Sample extends Auditable<String> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

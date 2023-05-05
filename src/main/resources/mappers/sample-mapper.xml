@@ -31,6 +31,10 @@
         <result column="custom_service_detail" jdbcType="INTEGER" property="customServiceDetail" />
         <result column="is_public" jdbcType="BOOLEAN" property="isPublic" />
         <result column="tip" jdbcType="VARCHAR" property="tip" />
+        <result column="created_by" jdbcType="VARCHAR" property="createdBy" />
+        <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+        <result column="last_modified_by" jdbcType="VARCHAR" property="lastModifiedBy" />
+        <result column="last_modified_date" jdbcType="TIMESTAMP" property="lastModifiedDate" />
         <collection property="labelList" ofType="com.example.demo.model.sample.SampleLabel">
             <id column="l_id" jdbcType="INTEGER" property="id" />
             <result column="l_name" jdbcType="VARCHAR" property="name"></result>
@@ -57,10 +61,10 @@
     </resultMap>
 
     <select id="findSampleById" parameterType="Long" resultMap="SampleMap">
-        select s.id,s.status,s.name_id, s.price_id, s.service_id, s.other_id ,sn.name as name,
-        sn.label_id as label_id, sn.description as description, sn.cover_imgs as cover_imgs,
-        sn.detail_imgs as detail_imgs, sp.price, sp.earnest,ss.provide_models, ss.model_count, ss.model_count_custom,
-        ss.film_count, ss.film_all_send, ss.shoot_duration, ss.shoot_duration_custom, ss.finishing_quantity,
+        select s.id,s.status,s.name_id, s.price_id, s.service_id, s.other_id, s.created_by, s.created_date,
+        s.last_modified_by, s.last_modified_date ,sn.name as name, sn.label_id as label_id, sn.description as description,
+        sn.cover_imgs as cover_imgs, sn.detail_imgs as detail_imgs, sp.price, sp.earnest,ss.provide_models, ss.model_count,
+        ss.model_count_custom, ss.film_count, ss.film_all_send, ss.shoot_duration, ss.shoot_duration_custom, ss.finishing_quantity,
         ss.shoot_scene_indoor_count, ss.shoot_scene_outdoor_count, ss.custom_service_detail, so.is_public, so.tip, sl.id as l_id,
         sl.name as l_name, sl.parent_id as l_parent_id from sample s left join sample_name sn on
         s.name_id = sn.id left join sample_price sp on s.price_id = sp.id left join sample_service ss
@@ -70,10 +74,10 @@
     </select>
 
     <select id="findUnFinishedSample" parameterType="Long" resultMap="SampleMap">
-        select s.id,s.status,s.name_id, s.price_id, s.service_id, s.other_id ,sn.name as name,
-        sn.label_id as label_id, sn.description as description, sn.cover_imgs as cover_imgs,
-        sn.detail_imgs as detail_imgs, sp.price, sp.earnest,ss.provide_models, ss.model_count, ss.model_count_custom,
-        ss.film_count, ss.film_all_send, ss.shoot_duration, ss.shoot_duration_custom, ss.finishing_quantity,
+        select s.id,s.status,s.name_id, s.price_id, s.service_id, s.other_id, s.created_by, s.created_date,
+        s.last_modified_by, s.last_modified_date ,sn.name as name, sn.label_id as label_id, sn.description as description,
+        sn.cover_imgs as cover_imgs, sn.detail_imgs as detail_imgs, sp.price, sp.earnest,ss.provide_models, ss.model_count,
+        ss.model_count_custom, ss.film_count, ss.film_all_send, ss.shoot_duration, ss.shoot_duration_custom, ss.finishing_quantity,
         ss.shoot_scene_indoor_count, ss.shoot_scene_outdoor_count, ss.custom_service_detail, so.is_public, so.tip, sl.id as l_id,
         sl.name as l_name, sl.parent_id as l_parent_id from sample s left join sample_name sn on
         s.name_id = sn.id left join sample_price sp on s.price_id = sp.id left join sample_service ss

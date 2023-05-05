@@ -6,6 +6,10 @@ create table if not exists `sample` (
     `other_id` int,
     `user_id` int,
     `status` int not null,
+    `created_by` varchar(20) not null,
+    `created_date` timestamp not null,
+    `last_modified_by` varchar(20) not null,
+    `last_modified_date` timestamp not null,
     primary key (id)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
